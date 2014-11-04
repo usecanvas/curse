@@ -1,0 +1,8 @@
+{
+  "framework": "mocha",
+  "src_files": [
+    "./dist/curse.js",
+    "./node_modules/should/should.js",
+    "./test/*-test.js"
+  ]
+}
