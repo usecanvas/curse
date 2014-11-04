@@ -1,0 +1,39 @@
+* {
+  box-sizing: border-box
+}
+
+body {
+  padding: 80px;
+  max-width: 800px;
+  width: 100%;
+
+  color: #333;
+  font-family: sans-serif;
+}
+
+h2 {
+  color: #666;
+  font-weight: normal;
+}
+
+table {
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  font-family: monospace;
+  padding: 4px 10px;
+  text-align: center;
+}
+
+.editor {
+  height: 800px;
+  width: 100%;
+
+  border: 1px solid #ccc;
+  margin: 20px auto 0 auto;
+  outline: none;
+  padding: 20px;
+}

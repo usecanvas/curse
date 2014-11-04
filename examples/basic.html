@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Curse | Basic</title>
+  <link rel='stylesheet' href='/styles.css'>
+</head>
+
+<body>
+  <h1>Curse</h1>
+  <h2>Basic Example</h2>
+
+  <button class='capture'>Capture</button>
+  <button class='restore'>Restore</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>start</th>
+        <th>end</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td class='start' contenteditable>null</td>
+        <td class='end' contenteditable>null</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class='editor' contenteditable>
+    Some text<br><br>
+
+    <img
+      src='http://cl.ly/image/3a0W2w0k1C22/Captain%20Ron%20still%204.jpg'
+      alt='Captain Ron'>
+
+    <br><br>
+
+    <div>
+      In a div.
+
+      <pre><code>class Curse() {
+  constructor(element) {
+    this.element = element;
+  }
+}</code></pre>
+
+      <p>End of div.</p>
+    </div>
+  </div>
+
+  <script src='/curse.js'></script>
+  <script src='/basic.js'></script>
+</body>
+</html>
