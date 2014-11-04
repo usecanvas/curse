@@ -53,6 +53,26 @@ describe('Curse', function() {
       assertSelected('o bar b');
     });
   });
+
+  describe('capturing and restoring spanning a newline', function() {
+    beforeEach(function() {
+      $e.innerText = 'foo\nbar\nbaz';
+      var range = createRange([$e.childNodes[0], 1], [$e.childNodes[4], 1]);
+      addRange(range);
+      assertSelected('oo\nbar\nb');
+      curse.capture();
+    });
+
+    it('can capture the selection', function() {
+      [curse.start, curse.end].should.eql([1, 9]);
+    });
+
+    it('can restore the selection', function() {
+      window.getSelection().removeAllRanges();
+      curse.restore();
+      assertSelected('oo\nbar\nb');
+    });
+  });
 });
 
 function addRange(range) {
