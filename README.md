@@ -19,8 +19,6 @@ Create a new `Curse` and pass it an `HTMLElement`. The curse is capable of
 capturing and restoring the user's selection.
 
 ```javascript
-import Curse from 'curse';
-
 var element = document.querySelector('#editor');
 var curse   = new Curse(element);
 
@@ -56,6 +54,25 @@ Curse currently only knows how to calculate the length of `Text` nodes and
 Because of ongoing work handling proper calculation of node length, it's not
 recommended to use it in production, yet. For example `<img>` tags should have
 a length of 1, but I haven't implemented them, yet.
+
+## Development
+
+Tests use [testem](https://github.com/airportyh/testem) and run in the Chrome
+browser.
+
+Install:
+
+```sh
+git clone git@github.com:slowink/curse.git
+cd curse
+npm install
+```
+
+Test:
+
+```sh
+npm test
+```
 
 ## Known Issues
 
