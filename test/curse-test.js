@@ -28,8 +28,29 @@ describe('Curse', function() {
     });
 
     it('can restore a selection', function() {
+      window.getSelection().removeAllRanges();
       curse.restore();
       assertSelected('o ba');
+    });
+  });
+
+  describe('capturing and restoring spanning an HTML element', function() {
+    beforeEach(function() {
+      $e.innerHTML = 'foo <b>bar</b> baz';
+      var range = createRange([$e.childNodes[0], 2], [$e.childNodes[2], 2]);
+      addRange(range);
+      assertSelected('o bar b');
+      curse.capture();
+    });
+
+    it('can capture the selection', function() {
+      [curse.start, curse.end].should.eql([2, 9]);
+    });
+
+    it('can restore the selection', function() {
+      window.getSelection().removeAllRanges();
+      curse.restore();
+      assertSelected('o bar b');
     });
   });
 });
