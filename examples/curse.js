@@ -33,24 +33,29 @@ function Curse(element) {
  * @method capture
  */
 Curse.prototype.capture = function capture() {
-  var selection = window.getSelection();
-  var idx       = 0;
+  var sel    = window.getSelection();
+  var anc    = sel.anchorNode;
+  var ancOff = sel.anchorOffset;
+  var foc    = sel.focusNode;
+  var focOff = sel.focusOffset;
+  var child, start, end;
 
-  this.reset();
+  if (anc.nodeName === '#text') {
+    start = this.lengthUpTo(anc) + ancOff;
+  } else {
+    child = anc.childNodes[ancOff];
+    start = this.lengthUpTo(child);
+  }
 
-  this.domWalk(this.element, function onNode(node) {
-    if (this.start && this.end) { return false; }
+  if (foc.nodeName === '#text') {
+    end = this.lengthUpTo(foc) + focOff;
+  } else {
+    child = foc.childNodes[focOff];
+    end = this.lengthUpTo(child) + this.nodeLength(child);
+  }
 
-    if (selection.anchorNode === node) {
-      this.start = idx + selection.anchorOffset;
-    }
-
-    if (selection.focusNode === node) {
-      this.end = idx + selection.focusOffset;
-    }
-
-    idx += this.nodeLength(node);
-  }.bind(this));
+  this.start = start;
+  this.end   = end;
 };
 
 /**
@@ -78,15 +83,29 @@ Curse.prototype.restore = function restore(onlyActive) {
     if (setStart && setEnd) { return false; }
 
     var nodeLength = this.nodeLength(node);
+    var isText     = node.nodeName === '#text';
+    var childIdx;
 
     if (!setStart && this.start <= idx + nodeLength) {
+      if (isText) {
+        range.setStart(node, this.start - idx);
+      } else {
+        childIdx = this.indexOfNode(node);
+        range.setStart(node.parentNode, childIdx);
+      }
+
       setStart = true;
-      range.setStart(node, this.start - idx);
     }
 
     if (!setEnd && this.end <= idx + nodeLength) {
+      if (isText) {
+        range.setEnd(node, this.end - idx);
+      } else {
+        childIdx = this.indexOfNode(node);
+        range.setEnd(node.parentNode, childIdx);
+      }
+
       setEnd = true;
-      range.setEnd(node, this.end - idx);
     }
 
     idx += nodeLength;
@@ -120,6 +139,49 @@ Curse.prototype.domWalk = function domWalk(node, fn) {
     node = node.nextSibling;
   }
 };
+
+/**
+ * Get the index of a node in its parent node.
+ *
+ * @method indexOfNode
+ * @private
+ * @param {Node} child the child node to find the index of
+ * @returns {Number} the index of the child node
+ */
+Curse.prototype.indexOfNode = function indexOfNode(child) {
+  var i = 0;
+
+  while ((child = child.previousSibling)) {
+    i++;
+  }
+
+  return i;
+};
+
+/**
+ * Get the number of characters up to a given node.
+ *
+ * @method lengthUpTo
+ * @private
+ * @param {Node} node a node to find the length up to
+ * @returns {Number} the length up to the given node
+ */
+Curse.prototype.lengthUpTo = function lengthUpTo(lastNode) {
+  var len  = 0;
+  var done = false;
+
+  this.domWalk(this.element, function onNode(node) {
+    if (done || node === lastNode) {
+      done = true;
+      return false;
+    }
+
+    len += this.nodeLength(node);
+  }.bind(this));
+
+  return len;
+};
+
 
 /**
  * Reset the state of the cursor.
