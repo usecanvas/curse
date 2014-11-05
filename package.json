@@ -1,9 +1,11 @@
 {
   "scripts": {
-    "dev": "harp server examples",
+    "dev": "nf start -j Procfile.dev",
     "test": "testem"
   },
   "devDependencies": {
+    "foreman": "^1.1.0",
+    "gulp": "^3.8.10",
     "harp": "^0.14.0",
     "mocha": "^2.0.1",
     "should": "^4.1.0",
