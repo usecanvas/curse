@@ -1,8 +1,10 @@
 {
   "scripts": {
+    "dev": "harp server examples",
     "test": "testem"
   },
   "devDependencies": {
+    "harp": "^0.14.0",
     "mocha": "^2.0.1",
     "should": "^4.1.0",
     "testem": "^0.6.22"
