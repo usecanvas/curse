@@ -1,13 +1,13 @@
 {
   "name": "curse",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": [
     "Jonathan Clem <jonathan@jclem.net>"
   ],
   "description": "manage cursor position in a contenteditable element",
   "main": "lib/curse.js",
   "moduleType": [
-    "globals",
+    "globals"
   ],
   "keywords": [
     "cursor",
