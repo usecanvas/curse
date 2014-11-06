@@ -1,24 +1,28 @@
 {
   "name": "curse",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "authors": [
     "Jonathan Clem <jonathan@jclem.net>"
   ],
   "description": "manage cursor position in a contenteditable element",
   "main": "lib/curse.js",
   "moduleType": [
-    "amd",
-    "es6"
+    "globals",
   ],
   "keywords": [
-    "cursor"
+    "cursor",
+    "contenteditable"
   ],
   "license": "MIT",
   "homepage": "https://github.com/slowink/curse",
   "ignore": [
     "**/.*",
+    "examples",
     "node_modules",
-    "bower_components",
-    "test"
+    "test",
+    "Gulpfile.js",
+    "package.json",
+    "Procfile.dev",
+    "testem.json"
   ]
 }
