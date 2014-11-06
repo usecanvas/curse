@@ -1,11 +1,10 @@
 # Curse
 
-Curse captures and restores cursors and selections in a `contenteditable` HTML
-element. This is especially useful in cases where the inner text of an element
-may change slightly, but it is necessary to preserve ths user's cursor or
-selection, such as in the case of a realtime collaborative text editor.
+Curse is a library for capturing and restoring selections—primarily for use in
+HTML elements that are `contenteditable`, where text may stay the same, but
+the rendered HTML may change.
 
-![Demonstration](http://cl.ly/image/1z0n0K0c1P2p/curse.mov.gif)
+![Demonstration](http://cl.ly/image/0W3r331E0w3X/curse.gif)
 
 ## Install
 
@@ -16,7 +15,7 @@ bower install curse
 ## Usage
 
 Create a new `Curse` and pass it an `HTMLElement`. The curse is capable of
-capturing and restoring the user's selection.
+capturing and restoring the user's selection inside of that element.
 
 ```javascript
 var element = document.querySelector('#editor');
@@ -24,7 +23,7 @@ var curse   = new Curse(element);
 
 element.innerText = 'Hello world';
 
-// User makes a selection
+// User selects "llo w"
 
 curse.capture(); // Capture the current cursor or selection
 
@@ -47,13 +46,9 @@ curse.end++;
 curse.restore(); // Selection is "llo, w"
 ```
 
-Curse currently only knows how to calculate the length of `Text` nodes and
-`HTMLBRElement`s (`<br>`). `Text` nodes are the length of their text data, and
-`HTMLBRElement`s have a length of 1 (i.e. a newline character).
-
-Because of ongoing work handling proper calculation of node length, it's not
-recommended to use it in production, yet. For example `<img>` tags should have
-a length of 1, but I haven't implemented them, yet.
+Curse still gets a little confused when it sees certain types of HTML elements
+in a contenteditable. If you run across something, please [open an
+issue](https://github.com/slowink/curse/issues).
 
 ## Development
 
@@ -74,10 +69,8 @@ Test:
 npm test
 ```
 
-## Known Issues
+In order to run the example page (useful for experimentation):
 
-There are some bugs :(
-
-- Selecting text in a backwards motion captures (and restores) text as a
-  forwards selection.
-- Selections that begin or end on HTML elements may not properly capture.
+```sh
+npm run dev
+```
