@@ -34,6 +34,29 @@ describe('Curse', function() {
     });
   });
 
+  describe('capturing and restoring a backwards selection', function() {
+    beforeEach(function() {
+      $e.innerText = 'foo bar';
+      var range = createRange([$e.childNodes[0], 2], [$e.childNodes[0], 6]);
+      addRange(range, true);
+      assertSelected('o ba');
+      curse.capture();
+    });
+
+    it('can capture a selection', function() {
+      [curse.start, curse.end].should.eql([6, 2]);
+    });
+
+    it('can restore a selection', function() {
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      curse.restore();
+      sel.anchorOffset.should.eql(6);
+      sel.focusOffset.should.eql(2);
+      assertSelected('o ba');
+    });
+  });
+
   describe('capturing and restoring spanning an HTML element', function() {
     beforeEach(function() {
       $e.innerHTML = 'foo <b>bar</b> baz';
@@ -75,10 +98,19 @@ describe('Curse', function() {
   });
 });
 
-function addRange(range) {
+function addRange(range, reverse) {
   var sel = window.getSelection();
   sel.removeAllRanges();
-  sel.addRange(range);
+
+  if (reverse) {
+    var startC = range.startContainer;
+    var startO = range.startOffset;
+    range.collapse(false);
+    sel.addRange(range);
+    sel.extend(startC, startO);
+  } else {
+    sel.addRange(range);
+  }
 }
 
 function assertSelected(text) {
