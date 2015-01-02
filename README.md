@@ -4,7 +4,7 @@ Curse is a library for capturing and restoring selections—primarily for use in
 HTML elements that are `contenteditable`, where text may stay the same, but
 the rendered HTML may change.
 
-![Demonstration](http://cl.ly/image/0W3r331E0w3X/curse.gif)
+![Demonstration](https://dl.dropboxusercontent.com/s/0ekgujm9vihn2rd/curse.gif?raw=1)
 
 ## Install
 
