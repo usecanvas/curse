@@ -1,7 +1,7 @@
 {
   "framework": "mocha",
   "src_files": [
-    "./lib/curse.js",
+    "./dist/curse.js",
     "./node_modules/should/should.js",
     "./test/*-test.js"
   ]
