@@ -1,7 +1,8 @@
 {
   "name": "curse",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "scripts": {
+    "build": "gulp build",
     "dev": "nf start -j Procfile.dev",
     "test": "testem"
   },

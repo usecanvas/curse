@@ -26,6 +26,11 @@ var _prototypeProperties = function (child, staticProps, instanceProps) {
  */
 var Curse = (function () {
   function Curse(element) {
+    var _ref = arguments[1] === undefined ? {} : arguments[1];
+    var lineBreak = _ref.lineBreak;
+    var nodeLengths = _ref.nodeLengths;
+    this.lineBreak = lineBreak;
+    this.nodeLengths = nodeLengths || {};
     this.element = element;
     this.reset();
   }
@@ -125,9 +130,9 @@ var Curse = (function () {
 
         var range = document.createRange();
         var idx = 0;
-        var _ref = this;
-        var start = _ref.start;
-        var end = _ref.end;
+        var _ref2 = this;
+        var start = _ref2.start;
+        var end = _ref2.end;
         var iter = this.iterator;
         var node = undefined,
             setStart = undefined,
@@ -272,9 +277,18 @@ var Curse = (function () {
        */
       value: function nodeLength(node) {
         var charNodes = ["BR", "HR", "IMG"];
+        var previousSibling = undefined;
 
-        if (node.nodeName === "#text") {
+        if (this.lineBreak) {
+          previousSibling = node.previousElementSibling;
+        }
+
+        if (previousSibling && previousSibling.classList.contains(this.lineBreak)) {
+          return 1;
+        } else if (node.nodeName === "#text") {
           return node.data.length;
+        } else if (this.nodeLengths[node.nodeName]) {
+          return this.nodeLengths[node.nodeName];
         } else if (charNodes.indexOf(node.nodeName) > -1) {
           return 1;
         } else {
