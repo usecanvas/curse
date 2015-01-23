@@ -90,14 +90,14 @@ var Curse = (function () {
         if (anchorNode.nodeName === "#text") {
           start = this.lengthUpTo(anchorNode) + anchorOffset;
         } else {
-          child = anchorNode.childNodes[anchorOffset];
+          child = anchorNode.childNodes[anchorOffset ? anchorOffset - 1 : 0];
           start = this.lengthUpTo(child);
         }
 
         if (focusNode.nodeName === "#text") {
           end = this.lengthUpTo(focusNode) + focusOffset;
         } else {
-          child = focusNode.childNodes[focusOffset];
+          child = focusNode.childNodes[focusOffset ? focusOffset - 1 : 0];
           end = this.lengthUpTo(child) + this.nodeLength(child);
         }
 
