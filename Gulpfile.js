@@ -2,14 +2,25 @@
 
 'use strict';
 
-var gulp = require('gulp');
-var bify = require('gulp-browserify');
+var browserify = require('browserify');
+var buffer     = require('vinyl-buffer');
+var gulp       = require('gulp');
+var source     = require('vinyl-source-stream');
 
 require('6to5ify');
 
 gulp.task('build', function build() {
-  return gulp.src(['src/curse.js'])
-    .pipe(bify({ transform: ['6to5ify'], standalone: 'Curse' }))
+  var bundler = browserify({
+    entries   : ['./src/curse.js'],
+    standalone: 'Curse',
+    transform : ['6to5ify']
+  });
+
+  var bundle = bundler.bundle();
+
+  bundle
+    .pipe(source('curse.js'))
+    .pipe(buffer())
     .pipe(gulp.dest('dist'));
 });
 
