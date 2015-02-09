@@ -309,10 +309,13 @@ var Curse = (function () {
        * @param {Number} endOffset the offset for the curse end
        */
       value: function offset() {
+        var _this = this;
         var startOffset = arguments[0] === undefined ? 0 : arguments[0];
-        var endOffset = arguments[1] === undefined ? 0 : arguments[1];
-        this.start += startOffset;
-        this.end += endOffset;
+        var endOffset = arguments[1] === undefined ? startOffset : arguments[1];
+        return (function () {
+          _this.start += startOffset;
+          _this.end += endOffset;
+        })();
       },
       writable: true,
       enumerable: true,

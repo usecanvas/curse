@@ -255,7 +255,7 @@ export default class Curse {
    * @param {Number} startOffset the offset for the curse start
    * @param {Number} endOffset the offset for the curse end
    */
-  offset(startOffset = 0, endOffset = 0) {
+  offset(startOffset = 0, endOffset = startOffset) {
     this.start += startOffset;
     this.end += endOffset;
   }

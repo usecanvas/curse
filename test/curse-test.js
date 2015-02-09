@@ -35,7 +35,7 @@ describe('Curse', function() {
 
     it('can offset a selection', function() {
       window.getSelection().removeAllRanges();
-      curse.offset(1, 1);
+      curse.offset(1);
       curse.restore();
       assertSelected(' bar');
     });
