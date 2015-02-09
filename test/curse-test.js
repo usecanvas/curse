@@ -39,6 +39,14 @@ describe('Curse', function() {
       curse.restore();
       assertSelected(' bar');
     });
+
+    it('can accept a custom node length function', function() {
+      curse = new Curse($e, { nodeLengthFn: function nodeLength(/* node, __super */) {
+        return 'CUSTOM';
+      } });
+
+      curse.nodeLength($e.firstChild).should.equal('CUSTOM');
+    });
   });
 
   describe('capturing and restoring a backwards selection', function() {

@@ -46,6 +46,26 @@ curse.end++;
 curse.restore(); // Selection is "llo, w"
 ```
 
+It's possible that depending on your setup, you may need to pass a custom
+function to a Curse to count node length. This can be done by passing
+`nodeLengthFn`:
+
+```javascript
+let curse = new Curse(element, { nodeLengthFn: nodeLengthFn });
+
+function nodeLengthFn(node, __super) {
+  if (node.classList.contains('Foo')) {
+    return 12;
+  } else {
+    /*
+     * `__super` can be called to call the original `nodeLength` function on the
+     * given node.
+     */
+    return __super();
+  }
+}
+```
+
 Curse still gets a little confused when it sees certain types of HTML elements
 in a contenteditable. If you run across something, please [open an
 issue](https://github.com/slowink/curse/issues).

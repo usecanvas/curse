@@ -27,11 +27,9 @@ var _prototypeProperties = function (child, staticProps, instanceProps) {
 var Curse = (function () {
   var Curse = function (element) {
     var _ref = arguments[1] === undefined ? {} : arguments[1];
-    var lineBreak = _ref.lineBreak;
-    var nodeLengths = _ref.nodeLengths;
-    this.lineBreak = lineBreak;
-    this.nodeLengths = nodeLengths || {};
+    var nodeLengthFn = _ref.nodeLengthFn;
     this.element = element;
+    this.nodeLengthFn = nodeLengthFn;
     this.reset();
   };
 
@@ -153,6 +151,7 @@ var Curse = (function () {
           var childIdx = undefined;
 
           if (!setStart && start <= idx + nodeLength) {
+            this.indexOfNode(node);
             if (isText) {
               range.setStart(node, start - idx);
             } else {
@@ -273,22 +272,30 @@ var Curse = (function () {
        * @method nodeLength
        * @private
        * @param {Node} node a Node, typically a Text or HTMLElement node
+       * @param {Bool} ignoreNodeLengthFn ignore the custom nodeLengthFn
        * @return {Number} the length of the node, as text
        */
       value: function nodeLength(node) {
-        var charNodes = ["BR", "HR", "IMG"];
-        var previousSibling = undefined;
+        var _this = this;
+        var ignoreNodeLengthFn = arguments[1] === undefined ? false : arguments[1];
+        if (this.nodeLengthFn && !ignoreNodeLengthFn) {
+          var _ret = (function () {
+            var nodeLength = _this.nodeLength.bind(_this);
 
-        if (this.lineBreak) {
-          previousSibling = node.previousElementSibling;
+            return {
+              v: _this.nodeLengthFn(node, function __super() {
+                return nodeLength(node, true);
+              })
+            };
+          })();
+
+          if (typeof _ret === "object") return _ret.v;
         }
 
-        if (previousSibling && previousSibling.classList.contains(this.lineBreak)) {
-          return 1;
-        } else if (node.nodeName === "#text") {
+        var charNodes = ["BR", "HR", "IMG"];
+
+        if (node.nodeName === "#text") {
           return node.data.length;
-        } else if (this.nodeLengths[node.nodeName]) {
-          return this.nodeLengths[node.nodeName];
         } else if (charNodes.indexOf(node.nodeName) > -1) {
           return 1;
         } else {
@@ -309,12 +316,12 @@ var Curse = (function () {
        * @param {Number} endOffset the offset for the curse end
        */
       value: function offset() {
-        var _this = this;
+        var _this2 = this;
         var startOffset = arguments[0] === undefined ? 0 : arguments[0];
         var endOffset = arguments[1] === undefined ? startOffset : arguments[1];
         return (function () {
-          _this.start += startOffset;
-          _this.end += endOffset;
+          _this2.start += startOffset;
+          _this2.end += endOffset;
         })();
       },
       writable: true,

@@ -17,10 +17,9 @@
  * @param {HTMLElement} element an element to track the cursor inside of
  */
 export default class Curse {
-  constructor(element, { lineBreak, nodeLengths } = {}) {
-    this.lineBreak = lineBreak;
-    this.nodeLengths = nodeLengths || {};
+  constructor(element, { nodeLengthFn } = {}) {
     this.element = element;
+    this.nodeLengthFn = nodeLengthFn;
     this.reset();
   }
 
@@ -126,6 +125,7 @@ export default class Curse {
       let childIdx;
 
       if (!setStart && start <= idx + nodeLength) {
+        this.indexOfNode(node);
         if (isText) {
           range.setStart(node, start - idx);
         } else {
@@ -225,22 +225,22 @@ export default class Curse {
    * @method nodeLength
    * @private
    * @param {Node} node a Node, typically a Text or HTMLElement node
+   * @param {Bool} ignoreNodeLengthFn ignore the custom nodeLengthFn
    * @return {Number} the length of the node, as text
    */
-  nodeLength(node) {
-    let charNodes = ['BR', 'HR', 'IMG'];
-    let previousSibling;
+  nodeLength(node, ignoreNodeLengthFn = false) {
+    if (this.nodeLengthFn && !ignoreNodeLengthFn) {
+      let nodeLength = this.nodeLength.bind(this);
 
-    if (this.lineBreak) {
-      previousSibling = node.previousElementSibling;
+      return this.nodeLengthFn(node, function __super() {
+        return nodeLength(node, true);
+      });
     }
 
-    if (previousSibling && previousSibling.classList.contains(this.lineBreak)) {
-      return 1;
-    } else if (node.nodeName === '#text') {
+    let charNodes = ['BR', 'HR', 'IMG'];
+
+    if (node.nodeName === '#text') {
       return node.data.length;
-    } else if (this.nodeLengths[node.nodeName]) {
-      return this.nodeLengths[node.nodeName];
     } else if (charNodes.indexOf(node.nodeName) > -1) {
       return 1;
     } else {
