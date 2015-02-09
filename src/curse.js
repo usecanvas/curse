@@ -247,4 +247,16 @@ export default class Curse {
       return 0;
     }
   }
+
+  /**
+   * Offset the cursor position's start and end.
+   *
+   * @method offset
+   * @param {Number} startOffset the offset for the curse start
+   * @param {Number} endOffset the offset for the curse end
+   */
+  offset(startOffset = 0, endOffset = 0) {
+    this.start += startOffset;
+    this.end += endOffset;
+  }
 }

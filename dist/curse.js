@@ -298,6 +298,25 @@ var Curse = (function () {
       writable: true,
       enumerable: true,
       configurable: true
+    },
+    offset: {
+
+      /**
+       * Offset the cursor position's start and end.
+       *
+       * @method offset
+       * @param {Number} startOffset the offset for the curse start
+       * @param {Number} endOffset the offset for the curse end
+       */
+      value: function offset() {
+        var startOffset = arguments[0] === undefined ? 0 : arguments[0];
+        var endOffset = arguments[1] === undefined ? 0 : arguments[1];
+        this.start += startOffset;
+        this.end += endOffset;
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
     }
   });
 

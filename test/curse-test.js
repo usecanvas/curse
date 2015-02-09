@@ -32,6 +32,13 @@ describe('Curse', function() {
       curse.restore();
       assertSelected('o ba');
     });
+
+    it('can offset a selection', function() {
+      window.getSelection().removeAllRanges();
+      curse.offset(1, 1);
+      curse.restore();
+      assertSelected(' bar');
+    });
   });
 
   describe('capturing and restoring a backwards selection', function() {
