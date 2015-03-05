@@ -1,11 +1,10 @@
 {
   "name": "cursejs",
-  "version": "3.0.0",
   "description": "A user selection caching utility",
-  "main": "dist/curse.js",
-  "directories": {
-    "example": "examples",
-    "test": "test"
+  "version": "3.0.0",
+  "author": "Jonathan Clem",
+  "bugs": {
+    "url": "https://github.com/slowink/curse/issues"
   },
   "devDependencies": {
     "6to5ify": "^3.1.2",
@@ -19,22 +18,23 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0"
   },
-  "scripts": {
-    "build": "gulp build",
-    "dev": "nf start -j Procfile.dev",
-    "test": "testem"
+  "directories": {
+    "example": "examples",
+    "test": "test"
   },
+  "homepage": "https://github.com/slowink/curse",
+  "keywords": [
+    "cursor"
+  ],
+  "license": "MIT",
+  "main": "dist/curse.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/slowink/curse.git"
   },
-  "keywords": [
-    "cursor"
-  ],
-  "author": "Jonathan Clem",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/slowink/curse/issues"
-  },
-  "homepage": "https://github.com/slowink/curse"
+  "scripts": {
+    "build": "gulp build",
+    "dev": "nf start -j Procfile.dev",
+    "test": "testem"
+  }
 }
