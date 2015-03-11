@@ -89,7 +89,7 @@ var Curse = (function () {
           start = this.lengthUpTo(anchorNode) + anchorOffset;
         } else {
           child = anchorNode.childNodes[anchorOffset ? anchorOffset - 1 : 0];
-          start = this.lengthUpTo(child);
+          start = this.lengthUpTo(child) + this.nodeLength(child);
         }
 
         if (focusNode.nodeName === "#text") {
