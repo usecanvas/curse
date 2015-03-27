@@ -24,31 +24,6 @@ export default class Curse {
   }
 
   /**
-   * An iterator to iterate over the nodes in `this.element`.
-   *
-   * This returns a simple node iterator that skips `this.element`, but not its
-   * children.
-   *
-   * @property iterator
-   * @private
-   * @type {NodeIterator}
-   */
-  get iterator() {
-    let elem = this.element;
-
-    return document.createNodeIterator(
-      this.element,
-
-      NodeFilter.SHOW_ALL,
-
-      function onNode(node) {
-        return node === elem ?
-          NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT;
-      }
-    );
-  }
-
-  /**
    * Captures the current selection in the element, by storing "start" and
    * "end" integer values. This allows for the text and text nodes to change
    * inside the element and still have the Curse be able to restore selection
@@ -73,14 +48,14 @@ export default class Curse {
       start = this.lengthUpTo(anchorNode) + anchorOffset;
     } else {
       child = anchorNode.childNodes[anchorOffset ? anchorOffset - 1 : 0];
-      start = this.lengthUpTo(child) + this.nodeLength(child);
+      start = this.lengthUpTo(child) + this.nodeLength(child, false, true);
     }
 
     if (focusNode.nodeName === '#text') {
       end = this.lengthUpTo(focusNode) + focusOffset;
     } else {
       child = focusNode.childNodes[focusOffset ? focusOffset - 1 : 0];
-      end   = this.lengthUpTo(child) + this.nodeLength(child);
+      end   = this.lengthUpTo(child) + this.nodeLength(child, false, true);
     }
 
     this.start = start;
@@ -107,7 +82,7 @@ export default class Curse {
     let range = document.createRange();
     let idx = 0;
     let { start, end } = this;
-    let iter = this.iterator;
+    let iter = this.getIterator(this.element);
     let node, setStart, setEnd;
 
     if (this.start > this.end) {
@@ -165,6 +140,27 @@ export default class Curse {
   }
 
   /**
+   * Get an iterator to iterate over the child nodes in a given node.
+   *
+   * @method getIterator
+   * @private
+   * @param {Node} iteratee The node to iterate through the children of
+   * @return {NodeIterator}
+   */
+  getIterator(iteratee) {
+    return document.createNodeIterator(
+      iteratee,
+
+      NodeFilter.SHOW_ALL,
+
+      function onNode(node) {
+        return node === iteratee ?
+          NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT;
+      }
+    );
+  }
+
+  /**
    * Get the index of a node in its parent node.
    *
    * @method indexOfNode
@@ -192,7 +188,7 @@ export default class Curse {
    */
   lengthUpTo(lastNode) {
     let len  = 0;
-    let iter = this.iterator;
+    let iter = this.getIterator(this.element);
     let node;
 
     while ((node = iter.nextNode())) {
@@ -224,17 +220,31 @@ export default class Curse {
    *
    * @method nodeLength
    * @private
-   * @param {Node} node a Node, typically a Text or HTMLElement node
-   * @param {Bool} ignoreNodeLengthFn ignore the custom nodeLengthFn
-   * @return {Number} the length of the node, as text
+   * @param {Node} node A Node, typically a Text or HTMLElement node
+   * @param {Bool} ignoreNodeLengthFn Ignore the custom nodeLengthFn
+   * @param {Bool} recurse Recurse through the node to get its length
+   * @return {Number} The length of the node, as text
    */
-  nodeLength(node, ignoreNodeLengthFn = false) {
+  nodeLength(node, ignoreNodeLengthFn = false, recurse = false) {
     if (this.nodeLengthFn && !ignoreNodeLengthFn) {
-      let nodeLength = this.nodeLength.bind(this);
+      const nodeLength = this.nodeLength.bind(this);
 
       return this.nodeLengthFn(node, function __super() {
-        return nodeLength(node, true);
+        return nodeLength(node, true, recurse);
       });
+    }
+
+    if (recurse && node.childNodes.length) {
+      const iter = this.getIterator(node);
+
+      let innerLength = 0;
+      let childNode;
+
+      while ((childNode = iter.nextNode())) {
+        innerLength += this.nodeLength(childNode, ignoreNodeLengthFn, recurse);
+      }
+
+      return innerLength;
     }
 
     let charNodes = ['BR', 'HR', 'IMG'];

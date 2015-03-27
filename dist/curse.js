@@ -34,28 +34,6 @@ var Curse = (function () {
   };
 
   _prototypeProperties(Curse, null, {
-    iterator: {
-
-      /**
-       * An iterator to iterate over the nodes in `this.element`.
-       *
-       * This returns a simple node iterator that skips `this.element`, but not its
-       * children.
-       *
-       * @property iterator
-       * @private
-       * @type {NodeIterator}
-       */
-      get: function () {
-        var elem = this.element;
-
-        return document.createNodeIterator(this.element, NodeFilter.SHOW_ALL, function onNode(node) {
-          return node === elem ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT;
-        });
-      },
-      enumerable: true,
-      configurable: true
-    },
     capture: {
 
       /**
@@ -89,14 +67,14 @@ var Curse = (function () {
           start = this.lengthUpTo(anchorNode) + anchorOffset;
         } else {
           child = anchorNode.childNodes[anchorOffset ? anchorOffset - 1 : 0];
-          start = this.lengthUpTo(child) + this.nodeLength(child);
+          start = this.lengthUpTo(child) + this.nodeLength(child, false, true);
         }
 
         if (focusNode.nodeName === "#text") {
           end = this.lengthUpTo(focusNode) + focusOffset;
         } else {
           child = focusNode.childNodes[focusOffset ? focusOffset - 1 : 0];
-          end = this.lengthUpTo(child) + this.nodeLength(child);
+          end = this.lengthUpTo(child) + this.nodeLength(child, false, true);
         }
 
         this.start = start;
@@ -131,7 +109,7 @@ var Curse = (function () {
         var _ref2 = this;
         var start = _ref2.start;
         var end = _ref2.end;
-        var iter = this.iterator;
+        var iter = this.getIterator(this.element);
         var node = undefined,
             setStart = undefined,
             setEnd = undefined;
@@ -194,6 +172,25 @@ var Curse = (function () {
       enumerable: true,
       configurable: true
     },
+    getIterator: {
+
+      /**
+       * Get an iterator to iterate over the child nodes in a given node.
+       *
+       * @method getIterator
+       * @private
+       * @param {Node} iteratee The node to iterate through the children of
+       * @return {NodeIterator}
+       */
+      value: function getIterator(iteratee) {
+        return document.createNodeIterator(iteratee, NodeFilter.SHOW_ALL, function onNode(node) {
+          return node === iteratee ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT;
+        });
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
     indexOfNode: {
 
       /**
@@ -229,7 +226,7 @@ var Curse = (function () {
        */
       value: function lengthUpTo(lastNode) {
         var len = 0;
-        var iter = this.iterator;
+        var iter = this.getIterator(this.element);
         var node = undefined;
 
         while (node = iter.nextNode()) {
@@ -271,25 +268,40 @@ var Curse = (function () {
        *
        * @method nodeLength
        * @private
-       * @param {Node} node a Node, typically a Text or HTMLElement node
-       * @param {Bool} ignoreNodeLengthFn ignore the custom nodeLengthFn
-       * @return {Number} the length of the node, as text
+       * @param {Node} node A Node, typically a Text or HTMLElement node
+       * @param {Bool} ignoreNodeLengthFn Ignore the custom nodeLengthFn
+       * @param {Bool} recurse Recurse through the node to get its length
+       * @return {Number} The length of the node, as text
        */
       value: function nodeLength(node) {
         var _this = this;
         var ignoreNodeLengthFn = arguments[1] === undefined ? false : arguments[1];
+        var recurse = arguments[2] === undefined ? false : arguments[2];
         if (this.nodeLengthFn && !ignoreNodeLengthFn) {
           var _ret = (function () {
             var nodeLength = _this.nodeLength.bind(_this);
 
             return {
               v: _this.nodeLengthFn(node, function __super() {
-                return nodeLength(node, true);
+                return nodeLength(node, true, recurse);
               })
             };
           })();
 
           if (typeof _ret === "object") return _ret.v;
+        }
+
+        if (recurse && node.childNodes.length) {
+          var iter = this.getIterator(node);
+
+          var innerLength = 0;
+          var childNode = undefined;
+
+          while (childNode = iter.nextNode()) {
+            innerLength += this.nodeLength(childNode, ignoreNodeLengthFn, recurse);
+          }
+
+          return innerLength;
         }
 
         var charNodes = ["BR", "HR", "IMG"];
