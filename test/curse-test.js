@@ -28,13 +28,13 @@ describe('Curse', function() {
     });
 
     it('can restore a selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.restore();
       assertSelected('o ba');
     });
 
     it('can offset a selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.offset(1);
       curse.restore();
       assertSelected(' bar');
@@ -47,6 +47,20 @@ describe('Curse', function() {
 
       curse.nodeLength($e.firstChild).should.equal('CUSTOM');
     });
+
+    it('will not restore on an inactive element ', function() {
+      clearCurrentSelection();
+      $e.blur();
+      curse.restore();
+      assertNoSelection();
+    })
+
+    it('will restore on an inactive element if forced', function() {
+      clearCurrentSelection();
+      $e.blur();
+      curse.restore(false);
+      assertSelected('o ba');
+    })
   });
 
   describe('capturing and restoring a backwards selection', function() {
@@ -86,7 +100,7 @@ describe('Curse', function() {
     });
 
     it('can restore the selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.restore();
       assertSelected('o bar b');
     });
@@ -106,7 +120,7 @@ describe('Curse', function() {
     });
 
     it('can restore the selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.restore();
       assertSelected('oo\nbar\nb');
     });
@@ -130,6 +144,14 @@ function addRange(range, reverse) {
 
 function assertSelected(text) {
   window.getSelection().toString().should.eql(text);
+}
+
+function assertNoSelection() {
+  window.getSelection().toString().should.eql('');
+}
+
+function clearCurrentSelection() {
+  window.getSelection().removeAllRanges();
 }
 
 function createRange(anchor, focus) {
