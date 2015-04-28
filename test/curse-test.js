@@ -96,7 +96,7 @@ describe('Curse', function() {
 
   describe('capturing and restoring spanning a newline', function() {
     beforeEach(function() {
-      setupNewlingSpanningSelection($e, curse);
+      setupNewlineSpanningSelection($e, curse);
     });
 
     it('can capture the selection', function() {
@@ -170,7 +170,7 @@ function setupHTMLSpanningSelection(el, curse) {
   curse.capture();
 }
 
-function setupNewlingSpanningSelection(el, curse) {
+function setupNewlineSpanningSelection(el, curse) {
   el.innerText = 'foo\nbar\nbaz';
   var range = createRange([el.childNodes[0], 1], [el.childNodes[4], 1]);
   addRange(range);
