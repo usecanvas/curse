@@ -14,27 +14,39 @@ describe('Curse', function() {
     $e.remove();
   });
 
-  describe('capturing and restoring over plaintext', function() {
-    beforeEach(function() {
-      $e.innerText = 'foo bar';
-      var range = createRange([$e.childNodes[0], 2], [$e.childNodes[0], 6]);
-      addRange(range);
+  describe('restoring on inactive elements', function() {
+    beforeEach(function() { setupForwardTextSelection($e, curse); });
+
+    it('will not restore selection on an inactive element', function() {
+      clearCurrentSelection();
+      $e.blur();
+      curse.restore();
+      assertNoSelection();
+    })
+
+    it('will restore selection on an inactive element if forced', function() {
+      clearCurrentSelection();
+      $e.blur();
+      curse.restore(onlyActive=false);
       assertSelected('o ba');
-      curse.capture();
-    });
+    })
+  });
+
+  describe('capturing and restoring over plaintext', function() {
+    beforeEach(function() { setupForwardTextSelection($e, curse); });
 
     it('can capture a selection', function() {
       [curse.start, curse.end].should.eql([2, 6]);
     });
 
     it('can restore a selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.restore();
       assertSelected('o ba');
     });
 
     it('can offset a selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.offset(1);
       curse.restore();
       assertSelected(' bar');
@@ -50,13 +62,7 @@ describe('Curse', function() {
   });
 
   describe('capturing and restoring a backwards selection', function() {
-    beforeEach(function() {
-      $e.innerText = 'foo bar';
-      var range = createRange([$e.childNodes[0], 2], [$e.childNodes[0], 6]);
-      addRange(range, true);
-      assertSelected('o ba');
-      curse.capture();
-    });
+    beforeEach(function() { setupReverseTextSelection($e, curse); });
 
     it('can capture a selection', function() {
       [curse.start, curse.end].should.eql([6, 2]);
@@ -74,11 +80,7 @@ describe('Curse', function() {
 
   describe('capturing and restoring spanning an HTML element', function() {
     beforeEach(function() {
-      $e.innerHTML = 'foo <b>bar</b> baz';
-      var range = createRange([$e.childNodes[0], 2], [$e.childNodes[2], 2]);
-      addRange(range);
-      assertSelected('o bar b');
-      curse.capture();
+      setupHTMLSpanningSelection($e, curse);
     });
 
     it('can capture the selection', function() {
@@ -86,7 +88,7 @@ describe('Curse', function() {
     });
 
     it('can restore the selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.restore();
       assertSelected('o bar b');
     });
@@ -94,11 +96,7 @@ describe('Curse', function() {
 
   describe('capturing and restoring spanning a newline', function() {
     beforeEach(function() {
-      $e.innerText = 'foo\nbar\nbaz';
-      var range = createRange([$e.childNodes[0], 1], [$e.childNodes[4], 1]);
-      addRange(range);
-      assertSelected('oo\nbar\nb');
-      curse.capture();
+      setupNewlineSpanningSelection($e, curse);
     });
 
     it('can capture the selection', function() {
@@ -106,7 +104,7 @@ describe('Curse', function() {
     });
 
     it('can restore the selection', function() {
-      window.getSelection().removeAllRanges();
+      clearCurrentSelection();
       curse.restore();
       assertSelected('oo\nbar\nb');
     });
@@ -132,9 +130,50 @@ function assertSelected(text) {
   window.getSelection().toString().should.eql(text);
 }
 
+function assertNoSelection() {
+  window.getSelection().toString().should.eql('');
+}
+
+function clearCurrentSelection() {
+  window.getSelection().removeAllRanges();
+}
+
 function createRange(anchor, focus) {
   var r = document.createRange();
   r.setStart(anchor[0], anchor[1]);
   r.setEnd(focus[0], focus[1]);
   return r;
+}
+
+// Test Fixtures
+function setupForwardTextSelection(el, curse) {
+  el.innerText = 'foo bar';
+  var range = createRange([el.childNodes[0], 2], [el.childNodes[0], 6]);
+  addRange(range);
+  assertSelected('o ba');
+  curse.capture();
+}
+
+function setupReverseTextSelection(el, curse) {
+  el.innerText = 'foo bar';
+  var range = createRange([el.childNodes[0], 2], [el.childNodes[0], 6]);
+  addRange(range, true);
+  assertSelected('o ba');
+  curse.capture();
+}
+
+function setupHTMLSpanningSelection(el, curse) {
+  el.innerHTML = 'foo <b>bar</b> baz';
+  var range = createRange([el.childNodes[0], 2], [el.childNodes[2], 2]);
+  addRange(range);
+  assertSelected('o bar b');
+  curse.capture();
+}
+
+function setupNewlineSpanningSelection(el, curse) {
+  el.innerText = 'foo\nbar\nbaz';
+  var range = createRange([el.childNodes[0], 1], [el.childNodes[4], 1]);
+  addRange(range);
+  assertSelected('oo\nbar\nb');
+  curse.capture();
 }
