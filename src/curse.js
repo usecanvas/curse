@@ -47,15 +47,25 @@ export default class Curse {
     if (anchorNode.nodeName === '#text') {
       start = this.lengthUpTo(anchorNode) + anchorOffset;
     } else {
-      child = anchorNode.childNodes[anchorOffset ? anchorOffset - 1 : 0];
-      start = this.lengthUpTo(child) + this.nodeLength(child, false, true);
+      child = anchorNode.childNodes[anchorOffset - 1];
+
+      if (child) {
+        start = this.lengthUpTo(child) + this.nodeLength(child, false, true);
+      } else {
+        start = this.lengthUpTo(anchorNode);
+      }
     }
 
     if (focusNode.nodeName === '#text') {
       end = this.lengthUpTo(focusNode) + focusOffset;
     } else {
-      child = focusNode.childNodes[focusOffset ? focusOffset - 1 : 0];
-      end   = this.lengthUpTo(child) + this.nodeLength(child, false, true);
+      child = focusNode.childNodes[focusOffset - 1];
+
+      if (child) {
+        end = this.lengthUpTo(child) + this.nodeLength(child, false, true);
+      } else {
+        end = this.lengthUpTo(focusNode);
+      }
     }
 
     this.start = start;
