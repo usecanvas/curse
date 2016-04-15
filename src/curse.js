@@ -41,7 +41,7 @@ export default class Curse {
 
     if (anchorNode === null || focusNode === null) {
       this.reset();
-      return;
+      return { start, end };
     }
 
     if (anchorNode.nodeName === '#text') {
@@ -70,6 +70,8 @@ export default class Curse {
 
     this.start = start;
     this.end = end;
+
+    return { start, end };
   }
 
   /**
@@ -80,7 +82,7 @@ export default class Curse {
    * @param {Boolean} [onlyActive=true] only restore if the curse's element is
    *   the active element
    */
-  restore(onlyActive = true) {
+  restore(onlyActive = true, { start, end } = this) {
     if (onlyActive && document.activeElement !== this.element) {
       return;
     }
@@ -91,7 +93,6 @@ export default class Curse {
 
     let range = document.createRange();
     let idx = 0;
-    let { start, end } = this;
     let iter = this.getIterator(this.element);
     let node, setStart, setEnd;
 

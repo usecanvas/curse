@@ -60,7 +60,7 @@ var Curse = (function () {
 
         if (anchorNode === null || focusNode === null) {
           this.reset();
-          return;
+          return { start: start, end: end };
         }
 
         if (anchorNode.nodeName === "#text") {
@@ -89,6 +89,8 @@ var Curse = (function () {
 
         this.start = start;
         this.end = end;
+
+        return { start: start, end: end };
       },
       writable: true,
       enumerable: true,
@@ -106,6 +108,9 @@ var Curse = (function () {
        */
       value: function restore() {
         var onlyActive = arguments[0] === undefined ? true : arguments[0];
+        var _ref2 = arguments[1] === undefined ? this : arguments[1];
+        var start = _ref2.start;
+        var end = _ref2.end;
         if (onlyActive && document.activeElement !== this.element) {
           return;
         }
@@ -116,9 +121,6 @@ var Curse = (function () {
 
         var range = document.createRange();
         var idx = 0;
-        var _ref2 = this;
-        var start = _ref2.start;
-        var end = _ref2.end;
         var iter = this.getIterator(this.element);
         var node = undefined,
             setStart = undefined,
